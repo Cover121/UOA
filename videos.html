@@ -4,9 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Videos</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet" />
   <style>
-
     body {
       margin: 0;
       font-family: 'Cairo', sans-serif;
@@ -137,7 +136,8 @@
       user-select: none;
       transition: background-color 0.3s, box-shadow 0.3s;
     }
-    .grid-item:hover, .grid-item:focus {
+    .grid-item:hover,
+    .grid-item:focus {
       background: linear-gradient(135deg, #697e92, #697e92);
       box-shadow: 0 6px 14px rgba(0,0,0,0.5);
       outline: none;
@@ -156,9 +156,13 @@
       padding: 15px;
       box-sizing: border-box;
       box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+      display: flex;
+      justify-content: center;
     }
-    #video-player {
+    #youtube-iframe {
       width: 100%;
+      height: 405px; /* 16:9 aspect ratio for width 720px */
+      border: none;
       border-radius: 8px;
       background-color: black;
     }
@@ -197,6 +201,9 @@
         width: 100%;
         max-width: 100%;
       }
+      #youtube-iframe {
+        height: 270px;
+      }
     }
   </style>
 </head>
@@ -207,7 +214,7 @@
   </div>
 
   <div class="sidebar" id="sidebar">
-    <button class="close-btn" aria-label="Close Sidebar" onclick="toggleSidebar()"></button>
+    <button class="close-btn" aria-label="Close Sidebar" onclick="toggleSidebar()">×</button>
     <h3 class="sidebar-option" onclick="window.location.href='flipping-cards.html'">Flipping cards</h3>
     <h3 class="sidebar-option active" aria-current="page" onclick="void(0)">Videos</h3>
   </div>
@@ -216,57 +223,52 @@
     <h1>Name the part of the scene/movie</h1>
 
     <div class="grid-container" role="list">
-      <div class="grid-item" role="listitem" tabindex="0" onclick="loadVideo('video1')" onkeydown="if(event.key==='Enter'||event.key===' ') loadVideo('video1')">
-        <div class="overlay">
-          <span>Part 1</span>
-        </div>
+      <div class="grid-item" role="listitem" tabindex="0" onclick="loadVideo('https://www.youtube.com/embed/j4yfdXHIVDE')" onkeydown="if(event.key==='Enter'||event.key===' ') loadVideo('https://www.youtube.com/embed/j4yfdXHIVDE')">
+        <div class="overlay"><span>Part 1</span></div>
       </div>
-      <div class="grid-item" role="listitem" tabindex="0" onclick="loadVideo('video2')" onkeydown="if(event.key==='Enter'||event.key===' ') loadVideo('video2')">
-        <div class="overlay">
-          <span>Part 2</span>
-        </div>
+      <div class="grid-item" role="listitem" tabindex="0" onclick="loadVideo('https://www.youtube.com/embed/LKnEo_yp0eE')" onkeydown="if(event.key==='Enter'||event.key===' ') loadVideo('https://www.youtube.com/embed/LKnEo_yp0eE')">
+        <div class="overlay"><span>Part 2</span></div>
       </div>
-      <div class="grid-item" role="listitem" tabindex="0" onclick="loadVideo('video3')" onkeydown="if(event.key==='Enter'||event.key===' ') loadVideo('video3')">
-        <div class="overlay">
-          <span>Part 3</span>
-        </div>
+      <div class="grid-item" role="listitem" tabindex="0" onclick="loadVideo('https://www.youtube.com/embed/11i9S8nhcaA')" onkeydown="if(event.key==='Enter'||event.key===' ') loadVideo('https://www.youtube.com/embed/11i9S8nhcaA')">
+        <div class="overlay"><span>Part 3</span></div>
       </div>
-      <div class="grid-item" role="listitem" tabindex="0" onclick="loadVideo('video4')" onkeydown="if(event.key==='Enter'||event.key===' ') loadVideo('video4')">
-        <div class="overlay">
-          <span>Part 4</span>
-        </div>
+      <div class="grid-item" role="listitem" tabindex="0" onclick="loadVideo('https://www.youtube.com/embed/t3OSOyqukaE')" onkeydown="if(event.key==='Enter'||event.key===' ') loadVideo('https://www.youtube.com/embed/t3OSOyqukaE')">
+        <div class="overlay"><span>Part 4</span></div>
       </div>
     </div>
 
-    <div class="video-container" id="video-container" style="display: none;">
-      <video id="video-player" controls>
-        <source id="video-source" src="" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+    <div class="video-container" id="video-container" style="display:none;">
+      <iframe
+        id="youtube-iframe"
+        src=""
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        title="Selected Video"
+      ></iframe>
       <div id="lyrics" class="lyrics" aria-live="polite" aria-atomic="true"></div>
     </div>
+
   </main>
 
 <script>
-
   const lyricsData = {
-    video1: [
+    'https://www.youtube.com/embed/j4yfdXHIVDE': [
       { time: 1, text: "You just tore up my pocket, Dad" },
     ],
-    video2: [
+    'https://www.youtube.com/embed/LKnEo_yp0eE': [
       { time: 3, text: "?You gonna act dumb" },
       { time: 6, text: "Turn off the lampshade and sleep" },
       { time: 8, text: "!!!Sleeeeep" },
     ],
-    video3: [
+    'https://www.youtube.com/embed/11i9S8nhcaA': [
       { time: 2, text: "The best thing about this weed" },
       { time: 5, text: "That it doesn't have any seeds" },
     ],
-    video4: [
+    'https://www.youtube.com/embed/t3OSOyqukaE': [
       { time: 4, text: "It hit him back" },
       { time: 5, text: "Then it landed on his chest" },
       { time: 6, text: "Which killed him" },
-    ]
+    ],
   };
 
   function toggleSidebar() {
@@ -274,40 +276,16 @@
     sidebar.classList.toggle("active");
   }
 
-  function loadVideo(videoId) {
-    const videoPlayer = document.getElementById("video-player");
-    const videoSource = document.getElementById("video-source");
-    videoSource.src = `videos/${videoId}.mp4`;
-    videoPlayer.load();
-    videoPlayer.play();
+  // Since we cannot sync lyrics with YouTube iframe playback easily without YouTube API, we'll show static lyrics on load for demonstration.
+  function loadVideo(videoUrl) {
+    const iframe = document.getElementById("youtube-iframe");
+    iframe.src = videoUrl + "?autoplay=1&rel=0";
+    document.getElementById("video-container").style.display = "flex";
 
-    document.getElementById("video-container").style.display = "block";
-
+    // Show first lyric item or empty
     const lyricsElement = document.getElementById("lyrics");
-    lyricsElement.textContent = "";
-
-    showLyrics(videoId);
-  }
-
-  function showLyrics(videoId) {
-    const videoPlayer = document.getElementById("video-player");
-    const lyricsElement = document.getElementById("lyrics");
-    const videoLyrics = lyricsData[videoId] || [];
-
-    videoPlayer.ontimeupdate = function() {
-      const currentTime = videoPlayer.currentTime;
-      let currentLyric = "";
-
-      for (let i = 0; i < videoLyrics.length; i++) {
-        if (currentTime >= videoLyrics[i].time) {
-          currentLyric = videoLyrics[i].text;
-        } else {
-          break;
-        }
-      }
-
-      lyricsElement.textContent = currentLyric;
-    };
+    const firstLyric = (lyricsData[videoUrl] && lyricsData[videoUrl][0]) ? lyricsData[videoUrl][0].text : "";
+    lyricsElement.textContent = firstLyric;
   }
 </script>
 
