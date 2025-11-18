@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Videos</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet" />
   <style>
@@ -157,11 +157,12 @@
       box-sizing: border-box;
       box-shadow: 0 5px 15px rgba(0,0,0,0.6);
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
     }
     #youtube-iframe {
       width: 100%;
-      height: 405px; /* 16:9 aspect ratio for width 720px */
+      height: 405px;
       border: none;
       border-radius: 8px;
       background-color: black;
@@ -170,11 +171,16 @@
       margin-top: 12px;
       color: #ddd;
       font-size: 1rem;
-      min-height: 2em;
-      direction: ltr;
-      user-select: none;
+      min-height: 3em;
+      width: 100%;
+      max-width: 700px;
       text-align: center;
       font-weight: 600;
+      user-select: none;
+      direction: ltr;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     @media (max-width: 768px) {
@@ -206,6 +212,7 @@
       }
     }
   </style>
+  <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
 
@@ -213,79 +220,135 @@
     <button class="menu-btn" id="menuBtn" aria-label="Toggle Sidebar" onclick="toggleSidebar()">☰</button>
   </div>
 
-  <div class="sidebar" id="sidebar">
+  <div class="sidebar" id="sidebar" role="navigation" aria-label="Primary Sidebar">
     <button class="close-btn" aria-label="Close Sidebar" onclick="toggleSidebar()">×</button>
-    <h3 class="sidebar-option" onclick="window.location.href='flipping-cards.html'">Flipping cards</h3>
-    <h3 class="sidebar-option active" aria-current="page" onclick="void(0)">Videos</h3>
+    <h3 class="sidebar-option" onclick="location.href='flipping-cards.html'">بطاقات متقلبة</h3>
+    <h3 class="sidebar-option active" aria-current="page" tabindex="0" aria-disabled="true">فيديوهات</h3>
   </div>
 
   <main class="main-content">
-    <h1>Name the part of the scene/movie</h1>
+    <h1>قسم الترجمة الفورية - Faculty of Arts</h1>
 
     <div class="grid-container" role="list">
-      <div class="grid-item" role="listitem" tabindex="0" onclick="loadVideo('https://www.youtube.com/embed/j4yfdXHIVDE')" onkeydown="if(event.key==='Enter'||event.key===' ') loadVideo('https://www.youtube.com/embed/j4yfdXHIVDE')">
-        <div class="overlay"><span>Part 1</span></div>
+      <div class="grid-item" role="listitem" tabindex="0" data-video-id="j4yfdXHIVDE" onclick="selectVideo(this)" onkeydown="if(event.key==='Enter'||event.key===' ') selectVideo(this)">
+        <span>فيديو 1</span>
       </div>
-      <div class="grid-item" role="listitem" tabindex="0" onclick="loadVideo('https://www.youtube.com/embed/LKnEo_yp0eE')" onkeydown="if(event.key==='Enter'||event.key===' ') loadVideo('https://www.youtube.com/embed/LKnEo_yp0eE')">
-        <div class="overlay"><span>Part 2</span></div>
+      <div class="grid-item" role="listitem" tabindex="0" data-video-id="LKnEo_yp0eE" onclick="selectVideo(this)" onkeydown="if(event.key==='Enter'||event.key===' ') selectVideo(this)">
+        <span>فيديو 2</span>
       </div>
-      <div class="grid-item" role="listitem" tabindex="0" onclick="loadVideo('https://www.youtube.com/embed/11i9S8nhcaA')" onkeydown="if(event.key==='Enter'||event.key===' ') loadVideo('https://www.youtube.com/embed/11i9S8nhcaA')">
-        <div class="overlay"><span>Part 3</span></div>
+      <div class="grid-item" role="listitem" tabindex="0" data-video-id="11i9S8nhcaA" onclick="selectVideo(this)" onkeydown="if(event.key==='Enter'||event.key===' ') selectVideo(this)">
+        <span>فيديو 3</span>
       </div>
-      <div class="grid-item" role="listitem" tabindex="0" onclick="loadVideo('https://www.youtube.com/embed/t3OSOyqukaE')" onkeydown="if(event.key==='Enter'||event.key===' ') loadVideo('https://www.youtube.com/embed/t3OSOyqukaE')">
-        <div class="overlay"><span>Part 4</span></div>
+      <div class="grid-item" role="listitem" tabindex="0" data-video-id="t3OSOyqukaE" onclick="selectVideo(this)" onkeydown="if(event.key==='Enter'||event.key===' ') selectVideo(this)">
+        <span>فيديو 4</span>
       </div>
     </div>
 
     <div class="video-container" id="video-container" style="display:none;">
-      <iframe
-        id="youtube-iframe"
-        src=""
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-        title="Selected Video"
-      ></iframe>
+      <div id="player"></div>
       <div id="lyrics" class="lyrics" aria-live="polite" aria-atomic="true"></div>
     </div>
-
   </main>
 
 <script>
+  let player;
+  let currentVideoId = null;
+  let lyricsTimeouts = [];
+
+  // Lyrics data keyed by YouTube video ID with timestamps in seconds
   const lyricsData = {
-    'https://www.youtube.com/embed/j4yfdXHIVDE': [
-      { time: 1, text: "You just tore up my pocket, Dad" },
+    j4yfdXHIVDE: [
+      { time: 1, text: "You just tore up my pocket, Dad" }
     ],
-    'https://www.youtube.com/embed/LKnEo_yp0eE': [
+    LKnEo_yp0eE: [
       { time: 3, text: "?You gonna act dumb" },
       { time: 6, text: "Turn off the lampshade and sleep" },
-      { time: 8, text: "!!!Sleeeeep" },
+      { time: 8, text: "!!!Sleeeeep" }
     ],
-    'https://www.youtube.com/embed/11i9S8nhcaA': [
+    "11i9S8nhcaA": [
       { time: 2, text: "The best thing about this weed" },
-      { time: 5, text: "That it doesn't have any seeds" },
+      { time: 5, text: "That it doesn't have any seeds" }
     ],
-    'https://www.youtube.com/embed/t3OSOyqukaE': [
+    t3OSOyqukaE: [
       { time: 4, text: "It hit him back" },
       { time: 5, text: "Then it landed on his chest" },
-      { time: 6, text: "Which killed him" },
-    ],
+      { time: 6, text: "Which killed him" }
+    ]
   };
 
   function toggleSidebar() {
-    const sidebar = document.getElementById("sidebar");
-    sidebar.classList.toggle("active");
+    document.getElementById("sidebar").classList.toggle("active");
   }
 
-  // Since we cannot sync lyrics with YouTube iframe playback easily without YouTube API, we'll show static lyrics on load for demonstration.
-  function loadVideo(videoUrl) {
-    const iframe = document.getElementById("youtube-iframe");
-    iframe.src = videoUrl + "?autoplay=1&rel=0";
-    document.getElementById("video-container").style.display = "flex";
+  // Load YouTube IFrame API player
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+      height: '405',
+      width: '720',
+      videoId: '',
+      events: {
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange
+      },
+      playerVars: {
+        rel: 0,
+        modestbranding: 1
+      }
+    });
+  }
 
-    // Show first lyric item or empty
-    const lyricsElement = document.getElementById("lyrics");
-    const firstLyric = (lyricsData[videoUrl] && lyricsData[videoUrl][0]) ? lyricsData[videoUrl][0].text : "";
-    lyricsElement.textContent = firstLyric;
+  function onPlayerReady(event) {
+    // nothing on ready
+  }
+
+  function onPlayerStateChange(event) {
+    clearAllTimeouts();
+    if (event.data === YT.PlayerState.PLAYING && currentVideoId) {
+      displayLyrics(currentVideoId);
+    } else {
+      clearLyrics();
+    }
+  }
+
+  function clearAllTimeouts() {
+    lyricsTimeouts.forEach(t => clearTimeout(t));
+    lyricsTimeouts = [];
+  }
+
+  function clearLyrics() {
+    document.getElementById("lyrics").textContent = "";
+  }
+
+  // Schedule showing lyrics with precise timings
+  function displayLyrics(videoId) {
+    clearAllTimeouts();
+    const videoLyrics = lyricsData[videoId] || [];
+    const startTime = player.getCurrentTime();
+
+    // For clean syncing, cancel timeouts before current time,
+    // and schedule only future ones based on current player time
+    for (let i = 0; i < videoLyrics.length; i++) {
+      const lyric = videoLyrics[i];
+      const delay = (lyric.time - startTime) * 1000;
+      if (delay >= 0) {
+        const timeoutId = setTimeout(() => {
+          document.getElementById("lyrics").textContent = lyric.text;
+        }, delay);
+        lyricsTimeouts.push(timeoutId);
+      }
+    }
+  }
+
+  function selectVideo(element) {
+    const videoId = element.getAttribute('data-video-id');
+    if (!videoId) return;
+
+    currentVideoId = videoId;
+    if (player && player.loadVideoById) {
+      player.loadVideoById(videoId);
+      document.getElementById('video-container').style.display = "flex";
+      clearLyrics();
+    }
   }
 </script>
 
