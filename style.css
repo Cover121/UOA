@@ -1,0 +1,181 @@
+/* General Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Cairo', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  position: relative;
+  background: url('imgs/background.jpg') no-repeat center center/cover;
+  min-height: 100vh;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0,0,0,0.4);
+  z-index: -1;
+}
+
+/* Menu Button */
+.menu-btn {
+  font-size: 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin: 15px;
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1100;
+  color: #fff;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 280px;
+  height: 100%;
+  background: rgba(34,34,34,0.95);
+  color: #fff;
+  padding: 20px;
+  transition: right 0.3s ease;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.sidebar.active { right: 0; }
+
+.close-btn {
+  font-size: 26px;
+  color: #fff;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 15px;
+  left: 15px;
+}
+
+/* Sidebar options */
+.sidebar h3 {
+  margin: 20px 0 10px;
+  font-size: 1.2rem;
+  border-bottom: 1px solid #444;
+  padding-bottom: 6px;
+  cursor: pointer;
+}
+
+/* Flipping Cards Option */
+.sidebar h3.sidebar-option {
+  margin-top: 50px;
+}
+
+/* Grid Layout for Videos */
+.grid-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 20px;
+}
+
+.grid-item {
+  width: 260px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  text-align: center;
+  padding: 10px;
+}
+
+.grid-item:hover {
+  transform: translateY(-5px);
+}
+
+.overlay span {
+  display: block;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+/* Video Container */
+.video-container {
+  width: 100%;
+  text-align: center;
+  margin-top: 30px;
+  display: none;
+  border: 5px solid transparent;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+  max-height: 80vh;
+  overflow: hidden;
+}
+
+.video-container.playing {
+  border: 5px solid #ff9800;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.video-container video {
+  width: 80%;
+  max-width: 900px;
+  border-radius: 10px;
+}
+
+/* Lyrics Style */
+.lyrics {
+  font-size: 29px;
+  color: white;
+  font-weight: bold;
+  position: absolute;
+  bottom: 10%;
+  width: 100%;
+  text-align: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Hero Section */
+.hero {
+  text-align: center;
+  padding: 80px 20px 30px;
+  color: #fff;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+  flex-shrink: 0;
+}
+
+/* Footer */
+footer {
+  background-color: #222;
+  color: white;
+  text-align: center;
+  padding: 12px;
+  font-size: 0.9rem;
+  margin-top: auto;
+}
+
+footer a { color: #ff9800; }
+
+@media (max-width: 768px) {
+  .grid-container { flex-direction: column; align-items: center; }
+  .grid-item { width: 90%; }
+}

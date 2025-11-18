@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Videos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background: url('imgs/videos.jpg') no-repeat center center/cover;
+      background-size: cover;
+      color: #fff;
+      display: flex;
+      min-height: 100vh;
+      flex-direction: row;
+      overflow-x: hidden;
+    }
+
+    .sidebar {
+      background-color: rgba(0,0,0,0.85);
+      width: 230px;
+      min-height: 100vh;
+      padding: 20px;
+      box-sizing: border-box;
+      transition: transform 0.3s ease;
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(230px);
+    }
+    .sidebar.active {
+      transform: translateX(0);
+    }
+    .sidebar .close-btn {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+      align-self: flex-start;
+      margin-bottom: 30px;
+    }
+    .sidebar h3 {
+      cursor: pointer;
+      margin: 15px 0;
+      font-weight: 600;
+      font-size: 1.2rem;
+      padding: 8px 12px;
+      border-radius: 6px;
+      transition: background-color 0.2s;
+      user-select: none;
+    }
+    .sidebar h3:hover {
+      background-color: #444;
+    }
+    .sidebar h3.active {
+      background-color: #555;
+      pointer-events: none;
+      cursor: default;
+    }
+
+    .topbar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 60px;
+      width: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+      box-sizing: border-box;
+      z-index: 1100;
+      justify-content: flex-end;
+    }
+    .menu-btn {
+      font-size: 28px;
+      background: transparent;
+      border: none;
+      color: white;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .main-content {
+      flex: 1;
+      margin-right: 230px;
+      padding: 80px 15px 15px 15px;
+      box-sizing: border-box;
+      min-height: 100vh;
+      background-color: rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .sidebar:not(.active) ~ .main-content {
+      margin-right: 0;
+      padding-top: 75px;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-size: 2rem;
+      text-align: center;
+      text-shadow: 1px 1px 5px rgba(0,0,0,0.7);
+    }
+
+    .hero {
+      display: none;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 720px;
+      cursor: pointer;
+    }
+    .grid-item {
+      background: linear-gradient(135deg, #239ecf, #239ecf);
+      height: 120px;
+      border-radius: 12px;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      user-select: none;
+      transition: background-color 0.3s, box-shadow 0.3s;
+    }
+    .grid-item:hover, .grid-item:focus {
+      background: linear-gradient(135deg, #697e92, #697e92);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+      outline: none;
+    }
+    .grid-item .overlay span {
+      color: #fff;
+      pointer-events: none;
+    }
+
+    .video-container {
+      margin-top: 40px;
+      width: 100%;
+      max-width: 720px;
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 12px;
+      padding: 15px;
+      box-sizing: border-box;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+    }
+    #video-player {
+      width: 100%;
+      border-radius: 8px;
+      background-color: black;
+    }
+    .lyrics {
+      margin-top: 12px;
+      color: #ddd;
+      font-size: 1rem;
+      min-height: 2em;
+      direction: ltr;
+      user-select: none;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+        background-position: center top;
+      }
+      .sidebar {
+        position: fixed;
+        width: 200px;
+        top: 60px;
+        height: calc(100% - 60px);
+        transform: translateX(200px);
+      }
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      .topbar {
+        justify-content: flex-start;
+      }
+      .main-content {
+        margin-right: 0;
+        padding: 75px 15px 15px 15px;
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <button class="menu-btn" id="menuBtn" aria-label="Toggle Sidebar" onclick="toggleSidebar()">☰</button>
+  </div>
+
+  <div class="sidebar" id="sidebar">
+    <button class="close-btn" aria-label="Close Sidebar" onclick="toggleSidebar()"></button>
+    <h3 class="sidebar-option" onclick="window.location.href='flipping-cards.html'">Flipping cards</h3>
+    <h3 class="sidebar-option active" aria-current="page" onclick="void(0)">Videos</h3>
+  </div>
+
+  <main class="main-content">
+    <h1>Name the part of the scene/movie</h1>
+
+    <div class="grid-container" role="list">
+      <div class="grid-item" role="listitem" tabindex="0" onclick="loadVideo('video1')" onkeydown="if(event.key==='Enter'||event.key===' ') loadVideo('video1')">
+        <div class="overlay">
+          <span>Part 1</span>
+        </div>
+      </div>
+      <div class="grid-item" role="listitem" tabindex="0" onclick="loadVideo('video2')" onkeydown="if(event.key==='Enter'||event.key===' ') loadVideo('video2')">
+        <div class="overlay">
+          <span>Part 2</span>
+        </div>
+      </div>
+      <div class="grid-item" role="listitem" tabindex="0" onclick="loadVideo('video3')" onkeydown="if(event.key==='Enter'||event.key===' ') loadVideo('video3')">
+        <div class="overlay">
+          <span>Part 3</span>
+        </div>
+      </div>
+      <div class="grid-item" role="listitem" tabindex="0" onclick="loadVideo('video4')" onkeydown="if(event.key==='Enter'||event.key===' ') loadVideo('video4')">
+        <div class="overlay">
+          <span>Part 4</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-container" id="video-container" style="display: none;">
+      <video id="video-player" controls>
+        <source id="video-source" src="" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <div id="lyrics" class="lyrics" aria-live="polite" aria-atomic="true"></div>
+    </div>
+  </main>
+
+<script>
+
+  const lyricsData = {
+    video1: [
+      { time: 1, text: "You just tore up my pocket, Dad" },
+    ],
+    video2: [
+      { time: 3, text: "?You gonna act dumb" },
+      { time: 6, text: "Turn off the lampshade and sleep" },
+      { time: 8, text: "!!!Sleeeeep" },
+    ],
+    video3: [
+      { time: 2, text: "The best thing about this weed" },
+      { time: 5, text: "That it doesn't have any seeds" },
+    ],
+    video4: [
+      { time: 4, text: "It hit him back" },
+      { time: 5, text: "Then it landed on his chest" },
+      { time: 6, text: "Which killed him" },
+    ]
+  };
+
+  function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    sidebar.classList.toggle("active");
+  }
+
+  function loadVideo(videoId) {
+    const videoPlayer = document.getElementById("video-player");
+    const videoSource = document.getElementById("video-source");
+    videoSource.src = `videos/${videoId}.mp4`;
+    videoPlayer.load();
+    videoPlayer.play();
+
+    document.getElementById("video-container").style.display = "block";
+
+    const lyricsElement = document.getElementById("lyrics");
+    lyricsElement.textContent = "";
+
+    showLyrics(videoId);
+  }
+
+  function showLyrics(videoId) {
+    const videoPlayer = document.getElementById("video-player");
+    const lyricsElement = document.getElementById("lyrics");
+    const videoLyrics = lyricsData[videoId] || [];
+
+    videoPlayer.ontimeupdate = function() {
+      const currentTime = videoPlayer.currentTime;
+      let currentLyric = "";
+
+      for (let i = 0; i < videoLyrics.length; i++) {
+        if (currentTime >= videoLyrics[i].time) {
+          currentLyric = videoLyrics[i].text;
+        } else {
+          break;
+        }
+      }
+
+      lyricsElement.textContent = currentLyric;
+    };
+  }
+</script>
+
+</body>
+</html>
